@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo mv src/em /usr/local/bin
+em -v

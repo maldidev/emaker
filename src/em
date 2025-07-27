@@ -1,0 +1,83 @@
+#!/bin/python3
+import os
+import sys
+import argparse
+
+variables = {}
+current_target = None
+
+def parse_line(line):
+    global current_target
+    line = line.strip()
+    if not line or line.startswith("#"):
+        return
+    if "=" in line and not line.startswith("$"):
+        var, value = line.split("=", 1)
+        variables[var.strip()] = value.strip()
+    elif line.endswith("["):
+        current_target = line.split("[")[0].strip()
+        variables[current_target] = []
+    elif line == "]":
+        current_target = None
+    elif current_target is None:
+        cmd = substitute_vars(line)
+        os.system(cmd)
+    else:
+        variables[current_target].append(line)
+
+def substitute_vars(text):
+    if isinstance(text, list):
+        return [substitute_vars(item) for item in text]
+    for var, value in variables.items():
+        if isinstance(value, str):
+            text = text.replace(f"${var}", value)
+    return text
+
+def run_target(target):
+    if target in variables and isinstance(variables[target], list):
+        for cmd in substitute_vars(variables[target]):
+            os.system(cmd)
+
+def main():
+    parser = argparse.ArgumentParser(description="EMake - A mini Makefile alternative")
+    parser.add_argument("target", nargs="?", help="Target to execute")
+    parser.add_argument("-v", "--version", action="store_true", help="Show version")
+    parser.add_argument("-c", "--clean", action="store_true", help="Run clean target")
+    parser.add_argument("-i", "--install", action="store_true", help="Run install target")
+    parser.add_argument("-l", "--list", action="store_true", help="List available targets")
+    
+    args = parser.parse_args()
+
+    if args.version:
+        print("EMake 1.0")
+        return
+
+    if not os.path.exists("EMake"):
+        print("Error: EMake file not found")
+        return
+
+    with open("EMake", "r") as f:
+        for line in f:
+            parse_line(line)
+
+    if args.list:
+        print("Available targets:")
+        for target in variables:
+            if isinstance(variables[target], list):
+                print(f"  {target}")
+        return
+
+    if args.clean:
+        run_target("clean")
+        return
+    elif args.install:
+        run_target("install")
+        return
+
+    if args.target:
+        run_target(args.target)
+    else:
+        pass
+
+if __name__ == "__main__":
+    main()

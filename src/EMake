@@ -1,0 +1,16 @@
+# kys blyat eto proverka
+#  fuck this is a testing
+CC=gcc
+OUTPUT=hello_world
+CFLAGS=-o hello_world
+FILE=test.c
+
+$CC $FILE $CFLAGS
+
+clean[
+    sudo rm $OUTPUT
+    sudo rm /usr/local/bin/$OUTPUT
+
+install[
+    w "Type your user password to do it."
+    sudo mv $OUTPUT /usr/local/bin
