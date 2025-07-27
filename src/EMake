@@ -5,7 +5,15 @@ OUTPUT=hello_world
 CFLAGS=-o hello_world
 FILE=test.c
 
-$CC $FILE $CFLAGS
+$CC $FILE $CFLAG
+
+info[
+    w "EMaker Testing file. Working: yes"
+
+# change to your packmanager
+pkgisland[
+    sudo apt
+
 
 clean[
     sudo rm $OUTPUT
