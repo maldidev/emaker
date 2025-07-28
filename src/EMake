@@ -22,3 +22,9 @@ clean[
 install[
     w "Type your user password to do it."
     sudo mv $OUTPUT /usr/local/bin
+
+PYC=pyinstaller
+PYFLAGS=--onefile 
+
+windows[
+    w "Compiling for WIN32_NT"
